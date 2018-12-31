@@ -26,10 +26,18 @@ mydata <- rbind(traindata,testdata)
 meanstd <- (grepl("subject", colnames(mydata)) | grepl("activity", colnames(mydata)) | grepl("mean()", colnames(mydata)) | grepl("std()", colnames(mydata)) )
 extrdata <- mydata[, meanstd==TRUE]
 
-###step 3 & 4 - describe and label
+###step 3 - describe activity names
 actlabel <- read.table("./activity_labels.txt", header = FALSE)
 names(actlabel) <- c("activity", "activitylabel")
 extrdatawlabel <- merge(extrdata, actlabel, by="activity", all.x=TRUE)
+
+###step 4 - label descriptively
+names(extrdatawlabel) <- gsub("^t", "time", names(extrdatawlabel))
+names(extrdatawlabel) <- gsub("^f", "frequency", names(extrdatawlabel))
+names(extrdatawlabel) <- gsub("Acc", "Accelerometer", names(extrdatawlabel))
+names(extrdatawlabel) <- gsub("Gyro", "Gyroscope", names(extrdatawlabel))
+names(extrdatawlabel) <- gsub("Mag", "Magnitude", names(extrdatawlabel))
+names(extrdatawlabel) <- gsub("BodyBody", "Body", names(extrdatawlabel))
 
 ###step 5 - create tidy data
 tidydata <- aggregate(. ~subject + activity, extrdatawlabel, mean)
